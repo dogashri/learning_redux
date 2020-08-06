@@ -1,13 +1,18 @@
 const redux = require('redux');
 const createStore = redux.createStore;
+const combineReducer = redux.combineReducers;
 
 const buy_bottle = 'buy the bottle';
 const buy_packets = 'buy the packets';
 
-const initialState = {
+const initialStateBottle = {
     numberOfBottles:10,
-    numberOfPackets:20,
     tagOnBottles :"Teachers"
+}
+
+const initialStatePacket = {
+    numberOfPackets:20,
+    tagOnPacket: "nuts"
 }
 
 
@@ -27,23 +32,35 @@ function buyPackets(){
     }
 }
 
-const Reducer = (state=initialState,action)=>{
+const bottleReducer = (state=initialStateBottle,action)=>{
     switch(action.type){
         case buy_bottle:
             return{
             ...state,
             numberOfBottles:state.numberOfBottles-1
         }
+        
+        default:return state
+    }
+}
+
+const packetReducer = (state=initialStatePacket,action)=>{
+    switch(action.type){
         case buy_packets:
             return{
                 ...state,
                 numberOfPackets:state.numberOfPackets-2
             }
-        default:return state
+            default: return state
     }
 }
 
-const store=createStore(Reducer)
+const reducer = combineReducer({
+    bottle:bottleReducer,
+    packet:packetReducer
+})
+
+const store=createStore(reducer)
 console.log('initial state',store.getState())
 const unsuscribe = store.subscribe(()=>{console.log('updated state',store.getState())})
 store.dispatch(buyBottles())
