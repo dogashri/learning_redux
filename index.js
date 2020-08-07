@@ -1,6 +1,7 @@
 const redux = require('redux');
 const createStore = redux.createStore;
 const combineReducer = redux.combineReducers;
+const applyMiddleware = redux.applyMiddleware;
 
 const buy_bottle = 'buy the bottle';
 const buy_packets = 'buy the packets';
@@ -60,7 +61,17 @@ const reducer = combineReducer({
     packet:packetReducer
 })
 
-const store=createStore(reducer)
+const logger = store=>{
+    return next=>{
+        return action=>{
+            const result = next(action)
+            console.log('middlewere log',result)
+            return result;
+        }
+    }
+}
+
+const store=createStore(reducer,applyMiddleware(logger))
 console.log('initial state',store.getState())
 const unsuscribe = store.subscribe(()=>{console.log('updated state',store.getState())})
 store.dispatch(buyBottles())
